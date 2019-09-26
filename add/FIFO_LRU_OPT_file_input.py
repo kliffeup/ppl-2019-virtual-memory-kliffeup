@@ -10,10 +10,10 @@ def is_page_uploaded():
     i = m - 1
     while i > -1:
         if frames_op_memory[i][0] == page_number:
-            output_data.write('Page %s already uploaded!\n' % page_number)
+            logs_data.write('Page %s already uploaded!\n' % page_number)
             for i in range(len(frames_op_memory)):
-                output_data.write("%s " % frames_op_memory[i][0])
-            output_data.write('\n')
+                logs_data.write("%s " % frames_op_memory[i][0])
+            logs_data.write('\n')
             return None
         i -= 1
     return page_uploader()
@@ -66,11 +66,11 @@ def upload_to_free_frame(free_frame_number):
     frames_op_memory[free_frame_number][0] = page_number
     if algorithm == 'FIFO':
         frames_op_memory[free_frame_number][1] = all_frame_usage_counter
-    output_data.write('Page %s uploaded to ' % page_number)
-    output_data.write('%s frame\n' % free_frame_number)
+    logs_data.write('Page %s uploaded to ' % page_number)
+    logs_data.write('%s frame\n' % free_frame_number)
     for i in range(len(frames_op_memory)):
-        output_data.write("%s " % frames_op_memory[i][0])
-    output_data.write('\n')
+        logs_data.write("%s " % frames_op_memory[i][0])
+    logs_data.write('\n')
 
 
 def replacement_choice():
@@ -142,13 +142,13 @@ def frame_clear(replaceable_page):
             в пустой кадр".
 
             """
-    output_data.write('Free frame needed, clearing of %s frame in progress...\n' % replaceable_page)
-    output_data.write('Page %s uploaded back from ' % frames_op_memory[replaceable_page][0])
-    output_data.write('%s frame to External Media\n' % replaceable_page)
+    logs_data.write('Free frame needed, clearing of %s frame in progress...\n' % replaceable_page)
+    logs_data.write('Page %s uploaded back from ' % frames_op_memory[replaceable_page][0])
+    logs_data.write('%s frame to External Media\n' % replaceable_page)
     frames_op_memory[replaceable_page][0] = 0
     for i in range(len(frames_op_memory)):
-        output_data.write("%s " % frames_op_memory[i][0])
-    output_data.write('\n')
+        logs_data.write("%s " % frames_op_memory[i][0])
+    logs_data.write('\n')
     upload_to_free_frame(replaceable_page)
 
 
@@ -158,34 +158,34 @@ with open('Input.txt') as input_data:
     for temp_page in input_data:
         query_sequence.append(int(temp_page.strip()))
 query_sequence.remove(0)
-output_data = open('Logs_and_Output.txt', 'w')
-output_data.write(str(n))
-output_data.write(' ')
-output_data.write(str(m))
-output_data.write('\n')
+logs_data = open('Logs.txt', 'w')
+logs_data.write(str(n))
+logs_data.write(' ')
+logs_data.write(str(m))
+logs_data.write('\n')
 for i in query_sequence:
-    output_data.write("%s" % i)
-    output_data.write('\n')
+    logs_data.write("%s" % i)
+    logs_data.write('\n')
 frames_op_memory = []
-output_data.write('FIFO\n')
+logs_data.write('FIFO\n')
 for i in range(m):
     frames_op_memory.append([0, 0])
 for i in range(len(frames_op_memory)):
-    output_data.write("%s " % frames_op_memory[i][0])
-output_data.write('\n')
+    logs_data.write("%s " % frames_op_memory[i][0])
+logs_data.write('\n')
 algorithm = 'FIFO'
 all_frame_usage_counter = 0
 frame_rewrites_count_fifo = 0
 for i in query_sequence:
     page_number = i
     is_page_uploaded()
-output_data.write("Frame rewrites by using FIFO: %s\n" % frame_rewrites_count_fifo)
-output_data.write('LRU\n')
+logs_data.write("Frame rewrites by using FIFO: %s\n" % frame_rewrites_count_fifo)
+logs_data.write('LRU\n')
 for i in range(len(frames_op_memory)):
     frames_op_memory[i] = [0, 0]
 for i in range(len(frames_op_memory)):
-    output_data.write("%s " % frames_op_memory[i][0])
-output_data.write('\n')
+    logs_data.write("%s " % frames_op_memory[i][0])
+logs_data.write('\n')
 algorithm = 'LRU'
 frame_rewrites_count_lru = 0
 recent_page_uses = []
@@ -195,13 +195,13 @@ for i in query_sequence:
         del recent_page_uses[0]
     recent_page_uses.append(page_number)
     is_page_uploaded()
-output_data.write("Frame rewrites by using LRU: %s\n" % frame_rewrites_count_lru)
-output_data.write('OPTIMAL\n')
+logs_data.write("Frame rewrites by using LRU: %s\n" % frame_rewrites_count_lru)
+logs_data.write('OPTIMAL\n')
 for i in range(len(frames_op_memory)):
     frames_op_memory[i] = [0, 0]
 for i in range(len(frames_op_memory)):
-    output_data.write("%s " % frames_op_memory[i][0])
-output_data.write('\n')
+    logs_data.write("%s " % frames_op_memory[i][0])
+logs_data.write('\n')
 algorithm = 'OPT'
 frame_rewrites_count_opt = 0
 remain_query_sequence = query_sequence.copy()
@@ -209,5 +209,10 @@ for i in range(len(query_sequence)):
     page_number = query_sequence[i]
     del remain_query_sequence[0]
     is_page_uploaded()
-output_data.write("Frame rewrites by using OPTIMAL: %s" % frame_rewrites_count_opt)
+logs_data.write("Frame rewrites by using OPTIMAL: %s" % frame_rewrites_count_opt)
+logs_data.close()
+output_data = open('Output.txt', 'w')
+output_data.write("Frame rewrites by using FIFO: %s\n" % frame_rewrites_count_fifo)
+output_data.write("Frame rewrites by using LRU: %s\n" % frame_rewrites_count_lru)
+output_data.write("Frame rewrites by using OPTIMAL: %s\n" % frame_rewrites_count_opt)
 output_data.close()
