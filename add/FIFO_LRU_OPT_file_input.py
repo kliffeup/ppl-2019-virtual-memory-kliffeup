@@ -158,7 +158,7 @@ with open('Input.txt') as input_data:
     for temp_page in input_data:
         query_sequence.append(int(temp_page.strip()))
 query_sequence.remove(0)
-output_data = open('General Output.txt', 'w')
+output_data = open('Logs_and_Output.txt', 'w')
 output_data.write(str(n))
 output_data.write(' ')
 output_data.write(str(m))
